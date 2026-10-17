@@ -1,3 +1,4 @@
+module
 /-
   RhoQuCalc.lean
   Project: Quantum Logical Framework
@@ -7,8 +8,10 @@
   dynamics from SpacetimeDynamics.lean.
 -/
 
-import SpacetimeDynamics
-import QLF_Critical_Line
+public import SpacetimeDynamics
+public import QLF_Critical_Line
+
+@[expose] public section
 
 open Matrix
 
@@ -248,7 +251,7 @@ private theorem pure_phase_symmetric_implies_zfa : ∀ n : Nat, ∀ s : TopoStri
   · subst hne; simp [full_zeno_prune, zeno_prune]
   · by_cases hlt : (zeno_prune s).length < s.length
     · rw [show full_zeno_prune s = full_zeno_prune (zeno_prune s) from
-            by rw [full_zeno_prune, dif_pos (by omega)]]
+            by rw [full_zeno_prune, dite_eq_left (by omega)]]
       rw [← achieves_ZFA_iff_empty]
       exact ih (zeno_prune s).length (by omega) (zeno_prune s) rfl
         (zeno_prune_preserves_pure_phase s hpure)
@@ -391,14 +394,14 @@ theorem rho_process_always_symmetric (p : RhoProcess) : is_symmetric (toTopoStri
 /--
   A process transition is valid (free) if the determinant is preserved.
 -/
-def is_valid_transition (p1 p2 : RhoProcess) : Prop :=
+def is_valid_transition (_p1 _p2 : RhoProcess) : Prop :=
   True  -- placeholder: determinant-preserving transition (det API not imported)
 
 /--
   Unitary Evolution is Free (trivial since is_valid_transition = True).
 -/
 theorem unitary_transition_is_free (p : RhoProcess) (U : Matrix (Fin 2) (Fin 2) ℂ)
-    (hU : U.conjTranspose * U = 1 ∧ U * U.conjTranspose = 1) :
+    (_hU : U.conjTranspose * U = 1 ∧ U * U.conjTranspose = 1) :
     is_valid_transition p (sequence (lift (Form.fromMatrix U))
       (action (Form.fromMatrix (U * p.eval * U.conjTranspose)))) := by
   trivial
@@ -406,7 +409,7 @@ theorem unitary_transition_is_free (p : RhoProcess) (U : Matrix (Fin 2) (Fin 2) 
 /--
   Every RhoProcess that is in Hermitian equilibrium is ZFA-stable.
 -/
-theorem rho_process_equilibrium_implies_zfa (p : RhoProcess) (h_eq : (p.eval).IsHermitian) :
+theorem rho_process_equilibrium_implies_zfa (p : RhoProcess) (_h_eq : (p.eval).IsHermitian) :
     achieves_ZFA (toTopoString p) :=
   toTopoString_always_zfa p
 

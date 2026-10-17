@@ -1,7 +1,10 @@
+module
 -- QLF FORMALIZATION: LEVEL 3 THE CRITICAL LINE (COMPLETED)
 -- Proving that Zero Free Action strictly requires 1/2 symmetry.
 
-import QLF_Axioms
+public import QLF_Axioms
+
+@[expose] public section
 
 namespace QLF
 

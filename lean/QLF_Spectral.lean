@@ -1,10 +1,13 @@
+module
 -- QLF_Spectral.lean
 -- Spectral structure of QLF strings: projector operators, Hermitian structure,
 -- and the Hilbert-Pólya bridge connecting symmetric QLF strings to the critical line.
 
-import QLF_Axioms
-import Mathlib.LinearAlgebra.Matrix.Hermitian
-import Mathlib.Data.Complex.Basic
+public import QLF_Axioms
+public import Mathlib.LinearAlgebra.Matrix.Hermitian
+public import Mathlib.Basic.Complex.Basic
+
+@[expose] public section
 
 namespace QLF
 
@@ -38,8 +41,8 @@ private lemma phaseMatrix_hermitian (p : LogicPhase) :
   cases p <;> apply Matrix.ext <;> intro i j <;> fin_cases i <;> fin_cases j <;>
   simp [Matrix.conjTranspose_apply, phaseMatrix,
         Matrix.cons_val_zero, Matrix.cons_val_one,
-        Matrix.head_cons, Matrix.head_fin_const,
-        Complex.star_def, Complex.conj_re, Complex.conj_im]
+
+        ]
 
 private lemma elementMatrix_hermitian (e : TopoElement) :
     (elementMatrix e).IsHermitian := by
@@ -79,7 +82,7 @@ private lemma toSpectralMode_diag (s : TopoString)
                val_pos, val_neg]
     rw [show (List.map elementMatrix tail).sum = toSpectralMode tail from rfl, iht]
     cases p <;> push_cast <;>
-    simp only [add_smul, one_smul, zero_smul, zero_add, add_zero] <;>
+    simp only [add_smul, one_smul, zero_add] <;>
     abel
 
 -- ==========================================
@@ -99,8 +102,8 @@ theorem spectral_symmetric_eq_scalar_id (s : TopoString)
   congr 1
   ext i j
   fin_cases i <;> fin_cases j <;>
-  simp [Matrix.add_apply, Matrix.one_apply, phaseMatrix,
+  simp [Matrix.add_apply,
         Matrix.cons_val_zero, Matrix.cons_val_one,
-        Matrix.head_cons, Matrix.head_fin_const]
+        ]
 
 end QLF

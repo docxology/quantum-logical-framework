@@ -1,3 +1,4 @@
+module
 /-
   PauliExclusion.lean
   Quantum Logical Framework — Pauli Exclusion Principle via RhoProcess antisymmetry
@@ -29,7 +30,9 @@
   Author: Jim Scarver + Claude — May 2026
 -/
 
-import RhoQuCalc   -- Form, RhoProcess, eval, toTopoString, ZFA theorems
+public import RhoQuCalc   -- Form, RhoProcess, eval, toTopoString, ZFA theorems
+
+@[expose] public section
 
 open Matrix
 
@@ -92,10 +95,10 @@ theorem pauli_exclusion_for_action (f : Form) :
 /-! ## Non-triviality: fermi_antisym is not identically zero -/
 
 /-- σ_x Form: Form.toMatrix gives the Pauli matrix σ_x = [[0,1],[1,0]] -/
-private def f_x : Form := { t := 0, x := 1, y := 0, z := 0 }
+def f_x : Form := { t := 0, x := 1, y := 0, z := 0 }
 
 /-- σ_z Form: Form.toMatrix gives the Pauli matrix σ_z = [[1,0],[0,-1]] -/
-private def f_z : Form := { t := 0, x := 0, y := 0, z := 1 }
+def f_z : Form := { t := 0, x := 0, y := 0, z := 1 }
 
 /-- **Non-triviality of Pauli exclusion:**
     The commutator of σ_x and σ_z is non-zero: [σ_x, σ_z] = [[0,-2],[2,0]] ≠ 0.
@@ -114,8 +117,8 @@ theorem fermi_nonzero_example :
     congr_fun (congr_fun h 0) 1
   simp only [Matrix.zero_apply, fermi_antisym, RhoProcess.eval, f_x, f_z, Form.toMatrix,
     Matrix.sub_apply, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
-    Complex.ofReal_zero, Complex.ofReal_one, Complex.ofReal_neg] at key
+
+    Complex.ofReal_zero, Complex.ofReal_one] at key
   norm_num at key
 
 /-! ## Bosonic double occupancy -/

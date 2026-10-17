@@ -1,3 +1,4 @@
+module
 /-
   StringTheoryQLF.lean
   Quantum Logical Framework — String Theory via Gauge-Fold Depth
@@ -28,8 +29,10 @@
   Author: Jim Scarver + Claude — May 2026
 -/
 
-import RhoQuCalc     -- RhoProcess, eval, Form, toTopoString, ZFA theorems
-import QLF_Riemann   -- find_stable_states_length_even, find_stable_states
+public import RhoQuCalc     -- RhoProcess, eval, Form, toTopoString, ZFA theorems
+public import QLF_Riemann   -- find_stable_states_length_even, find_stable_states
+
+@[expose] public section
 
 open Matrix
 

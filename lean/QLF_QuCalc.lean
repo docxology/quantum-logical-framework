@@ -1,5 +1,8 @@
-import QLF_Axioms
-import Mathlib.Data.List.Basic
+module
+public import QLF_Axioms
+public import Mathlib.Data.List.Basic
+
+@[expose] public section
 
 -- ==========================================
 -- 1. THE POSSIBILIST EXPANSION ENGINE

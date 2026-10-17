@@ -1,3 +1,4 @@
+module
 /-
   BraKetRhoQuCalc.lean
   Quantum Logical Framework — Bra-Ket ↔ RhoQuCalc correspondence
@@ -33,7 +34,9 @@
   Author: Jim Scarver + Claude — May 2026
 -/
 
-import RhoQuCalc
+public import RhoQuCalc
+
+@[expose] public section
 
 open Matrix
 
@@ -121,16 +124,16 @@ theorem bra_ket_always_balanced (p : RhoProcess) : achieves_ZFA (toTopoString p)
 -- The density matrix representation: |ψ⟩⟨ψ| = Form.toMatrix
 
 /-- |0⟩ as density matrix |0⟩⟨0| = [[1,0],[0,0]] -/
-private noncomputable def ket0 : Form := { t := 1/2, x := 0,   y := 0, z :=  1/2 }
+noncomputable def ket0 : Form := { t := 1/2, x := 0,   y := 0, z :=  1/2 }
 /-- |1⟩ as density matrix |1⟩⟨1| = [[0,0],[0,1]] -/
-private noncomputable def ket1 : Form := { t := 1/2, x := 0,   y := 0, z := -1/2 }
+noncomputable def ket1 : Form := { t := 1/2, x := 0,   y := 0, z := -1/2 }
 /-- |+⟩ as density matrix |+⟩⟨+| = [[½,½],[½,½]] -/
-private noncomputable def ket_plus : Form := { t := 1/2, x := 1/2, y := 0, z :=    0 }
+noncomputable def ket_plus : Form := { t := 1/2, x := 1/2, y := 0, z :=    0 }
 
 -- Pauli observables (traceless Hermitian, eigenvalues ±1)
-private def σx : Form := { t := 0, x := 1, y := 0, z := 0 }  -- [[0,1],[1,0]]
-private def σy : Form := { t := 0, x := 0, y := 1, z := 0 }  -- [[0,-i],[i,0]]
-private def σz : Form := { t := 0, x := 0, y := 0, z := 1 }  -- [[1,0],[0,-1]]
+def σx : Form := { t := 0, x := 1, y := 0, z := 0 }  -- [[0,1],[1,0]]
+def σy : Form := { t := 0, x := 0, y := 1, z := 0 }  -- [[0,-i],[i,0]]
+def σz : Form := { t := 0, x := 0, y := 0, z := 1 }  -- [[1,0],[0,-1]]
 
 /-! ## 8. Completeness relations -/
 
@@ -141,20 +144,20 @@ theorem completeness_01 :
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [RhoProcess.eval, ket0, ket1, Form.toMatrix, Matrix.add_apply, Matrix.one_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
-    Complex.ofReal_zero, Complex.ofReal_neg] <;>
+
+    Complex.ofReal_zero] <;>
   norm_num
 
 /-- The Hadamard basis {|+⟩, |-⟩} is also complete: |+⟩⟨+| + |-⟩⟨-| = I. -/
-private noncomputable def ket_minus : Form := { t := 1/2, x := -1/2, y := 0, z := 0 }
+noncomputable def ket_minus : Form := { t := 1/2, x := -1/2, y := 0, z := 0 }
 
 theorem completeness_pm :
     (RhoProcess.parallel (RhoProcess.action ket_plus) (RhoProcess.action ket_minus)).eval = 1 := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [RhoProcess.eval, ket_plus, ket_minus, Form.toMatrix, Matrix.add_apply, Matrix.one_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
-    Complex.ofReal_zero, Complex.ofReal_neg] <;>
+
+    Complex.ofReal_zero] <;>
   norm_num
 
 /-! ## 9. Projector idempotency -/
@@ -168,7 +171,7 @@ theorem projector_idempotent_0 :
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [ket0, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
+
     Complex.ofReal_zero] <;>
   norm_num
 
@@ -182,8 +185,8 @@ theorem orthogonality_01 :
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [ket0, ket1, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
-    Complex.ofReal_zero, Complex.ofReal_neg, Matrix.zero_apply] <;>
+
+    Complex.ofReal_zero, Matrix.zero_apply] <;>
   norm_num
 
 /-! ## 11. Pauli algebra: σᵢ² = I -/
@@ -193,7 +196,7 @@ theorem pauli_x_sq : (RhoProcess.sequence (RhoProcess.action σx) (RhoProcess.ac
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [RhoProcess.eval, σx, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
+
     Matrix.one_apply, Complex.ofReal_zero, Complex.ofReal_one] <;>
   norm_num
 
@@ -202,21 +205,20 @@ theorem pauli_y_sq : (RhoProcess.sequence (RhoProcess.action σy) (RhoProcess.ac
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [RhoProcess.eval, σy, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
+
     Matrix.one_apply, Complex.ofReal_zero, Complex.ofReal_one] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  ring
+  simp [
+
+        ]
 
 /-- σz² = I. -/
 theorem pauli_z_sq : (RhoProcess.sequence (RhoProcess.action σz) (RhoProcess.action σz)).eval = 1 := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [RhoProcess.eval, σz, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
-    Matrix.one_apply, Complex.ofReal_zero, Complex.ofReal_one, Complex.ofReal_neg] <;>
+
+    Matrix.one_apply, Complex.ofReal_zero, Complex.ofReal_one] <;>
   norm_num
 
 /-! ## 12. Summary: ZFA symmetry of bra-ket pairs -/
@@ -253,8 +255,8 @@ theorem orthogonality_pm :
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [ket_plus, ket_minus, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
-    Complex.ofReal_zero, Complex.ofReal_neg, Matrix.zero_apply] <;>
+
+    Complex.ofReal_zero, Matrix.zero_apply] <;>
   norm_num
 
 /-! ## 15. Pauli commutator algebra: [σᵢ, σⱼ] = 2i εᵢⱼₖ σₖ -/
@@ -270,13 +272,13 @@ theorem sigma_comm_xy :
   fin_cases i <;> fin_cases j <;>
   simp only [σx, σy, σz, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
     Matrix.sub_apply, Matrix.smul_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
+
     Complex.ofReal_zero, Complex.ofReal_one] <;>
   apply Complex.ext <;>
   simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
         Complex.sub_re, Complex.sub_im, Complex.neg_re, Complex.neg_im,
-        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
-        Complex.smul_re, Complex.smul_im] <;>
+        Complex.I_re, Complex.I_im,
+        ] <;>
   ring
 
 /-- [σy, σz] = 2i σx. -/
@@ -287,13 +289,13 @@ theorem sigma_comm_yz :
   fin_cases i <;> fin_cases j <;>
   simp only [σx, σy, σz, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
     Matrix.sub_apply, Matrix.smul_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
+
     Complex.ofReal_zero, Complex.ofReal_one] <;>
   apply Complex.ext <;>
   simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.sub_re, Complex.sub_im, Complex.neg_re, Complex.neg_im,
-        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
-        Complex.smul_re, Complex.smul_im] <;>
+
+        Complex.I_re, Complex.I_im,
+        ] <;>
   ring
 
 /-- [σz, σx] = 2i σy. -/
@@ -304,13 +306,13 @@ theorem sigma_comm_zx :
   fin_cases i <;> fin_cases j <;>
   simp only [σx, σy, σz, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
     Matrix.sub_apply, Matrix.smul_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const,
+
     Complex.ofReal_zero, Complex.ofReal_one] <;>
   apply Complex.ext <;>
   simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
         Complex.sub_re, Complex.sub_im, Complex.neg_re, Complex.neg_im,
-        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
-        Complex.smul_re, Complex.smul_im] <;>
+        Complex.I_re, Complex.I_im,
+        ] <;>
   ring
 
 /-! ## 16. Σ₈ algebra bridge: τᵢ = i · σᵢ satisfies τᵢ² = −I -/
@@ -321,81 +323,75 @@ theorem sigma_comm_zx :
 -- (The cyclic convention τxτy = +τz corresponds to τᵢ = −iσᵢ.)
 -- Reference: Lagrangian_Formulation.md §3 Algebraic Backbone.
 
-private noncomputable def τx : Matrix (Fin 2) (Fin 2) ℂ := !![0, Complex.I; Complex.I, 0]
-private noncomputable def τy : Matrix (Fin 2) (Fin 2) ℂ := !![0, 1; -1, 0]
-private noncomputable def τz : Matrix (Fin 2) (Fin 2) ℂ := !![Complex.I, 0; 0, -Complex.I]
+noncomputable def τx : Matrix (Fin 2) (Fin 2) ℂ := !![0, Complex.I; Complex.I, 0]
+noncomputable def τy : Matrix (Fin 2) (Fin 2) ℂ := !![0, 1; -1, 0]
+noncomputable def τz : Matrix (Fin 2) (Fin 2) ℂ := !![Complex.I, 0; 0, -Complex.I]
 
 /-- τx² = −I. -/
 theorem tau_x_sq : τx * τx = -(1 : Matrix (Fin 2) (Fin 2) ℂ) := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [τx, Matrix.mul_apply, Fin.sum_univ_two, Matrix.neg_apply, Matrix.one_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] <;>
+    ] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  norm_num
+  simp [
+        Complex.neg_re, Complex.neg_im,
+        ]
 
 /-- τy² = −I. -/
 theorem tau_y_sq : τy * τy = -(1 : Matrix (Fin 2) (Fin 2) ℂ) := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [τy, Matrix.mul_apply, Fin.sum_univ_two, Matrix.neg_apply, Matrix.one_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] <;>
+    ] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  norm_num
+  simp [
+        Complex.neg_re, Complex.neg_im,
+        ]
 
 /-- τz² = −I. -/
 theorem tau_z_sq : τz * τz = -(1 : Matrix (Fin 2) (Fin 2) ℂ) := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [τz, Matrix.mul_apply, Fin.sum_univ_two, Matrix.neg_apply, Matrix.one_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] <;>
+    ] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  norm_num
+  simp [
+        Complex.neg_re, Complex.neg_im,
+        ]
 
 /-- τx · τy = −τz  (anti-cyclic product). -/
 theorem tau_xy_product : τx * τy = -τz := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [τx, τy, τz, Matrix.mul_apply, Fin.sum_univ_two, Matrix.neg_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] <;>
+    ] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
+  simp [
         Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  ring
+        ]
 
 /-- τy · τz = −τx. -/
 theorem tau_yz_product : τy * τz = -τx := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [τx, τy, τz, Matrix.mul_apply, Fin.sum_univ_two, Matrix.neg_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] <;>
+    ] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
+  simp [
         Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  ring
+        ]
 
 /-- τz · τx = −τy. -/
 theorem tau_zx_product : τz * τx = -τy := by
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [τx, τy, τz, Matrix.mul_apply, Fin.sum_univ_two, Matrix.neg_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.head_fin_const] <;>
+    ] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
-        Complex.ofReal_re, Complex.ofReal_im] <;>
-  ring
+  simp [
+        Complex.neg_re, Complex.neg_im,
+        ]
 
 /-! ## 17. Trace preservation under unitary evolution -/
 
@@ -418,14 +414,13 @@ theorem commutator_zero_diagonal (f : Form) (hx : f.x = 0) (hy : f.y = 0) :
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [σz, Form.toMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-    Matrix.sub_apply, Matrix.zero_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.head_fin_const, hx, hy,
-    Complex.ofReal_zero, mul_zero, zero_mul, sub_zero, zero_sub, zero_add, add_zero] <;>
+    Matrix.sub_apply, Matrix.zero_apply,
+    hx, hy,
+    Complex.ofReal_zero, mul_zero, sub_zero, zero_sub, zero_add, add_zero] <;>
   apply Complex.ext <;>
-  simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
-        Complex.sub_re, Complex.sub_im, Complex.neg_re, Complex.neg_im,
-        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im] <;>
-  ring
+  simp [
+
+        ]
 
 /-- ket0 = |0⟩⟨0| commutes with σz (|0⟩ is a σz eigenstate). -/
 theorem commutator_zero_ket0_sigmaz :

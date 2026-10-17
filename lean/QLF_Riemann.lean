@@ -1,16 +1,19 @@
+module
 -- QLF_Riemann.lean
 -- Riemann Hypothesis Proof – Corrected Combinatorial Connection
 
-import QLF_Axioms
-import QLF_QuCalc
-import QLF_Universality
-import QLF_Critical_Line
-import QLF_Spectral
-import RhoQuCalc
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.Data.Complex.Basic
-import Mathlib.Data.List.Basic
-import Mathlib.Data.Nat.Choose.Basic
+public import QLF_Axioms
+public import QLF_QuCalc
+public import QLF_Universality
+public import QLF_Critical_Line
+public import QLF_Spectral
+public import RhoQuCalc
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.Nat.Choose.Basic
+
+@[expose] public section
 
 namespace QLF
 
@@ -186,7 +189,7 @@ private lemma count_pos_append_pos (s : TopoString) :
 private lemma count_pos_append_neg (s : TopoString) :
     count_pos (s ++ [TopoElement.phase LogicPhase.neg]) = count_pos s := by
   induction s with
-  | nil => simp [count_pos, val_pos]
+  | nil => simp [count_pos]
   | cons h t ih => simp only [List.cons_append, count_pos_cons, ih]
 
 -- Filter length over expand_states splits by pos-count: Pascal step
@@ -217,15 +220,17 @@ private lemma expand_generation_filter_pos_count (k p : ℕ) :
     Nat.choose k p := by
   induction k generalizing p with
   | zero =>
-    simp only [expand_generation, List.filter_cons, List.filter_nil, List.length_cons,
-               List.length_nil, count_pos]
+    simp only [expand_generation, List.filter_cons, List.filter_nil,
+               count_pos]
     cases p with
     | zero => simp
     | succ p =>
       -- avoid decide-matching issues by using split_ifs directly
       simp only [Nat.choose_zero_succ]
       split_ifs with h
-      · rw [decide_eq_true_eq] at h; push_cast at h; omega
+      · have h' := @of_decide_eq_true _ _ h
+        push_cast at h'
+        omega
       · rfl
   | succ k ih =>
     simp only [expand_generation]
@@ -243,7 +248,7 @@ private lemma expand_generation_filter_pos_count (k p : ℕ) :
           induction l with
           | nil => simp
           | cons h t ihl =>
-            simp only [List.filter_cons, hneg h, if_false]
+            simp only [List.filter_cons, hneg h]
             exact ihl
         simp [hnil]
       rw [hzero, zero_add]

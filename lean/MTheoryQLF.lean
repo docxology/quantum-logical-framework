@@ -1,3 +1,4 @@
+module
 /-
   MTheoryQLF.lean
   Quantum Logical Framework — M-Theory via Gauge-Fold Stacks
@@ -33,8 +34,10 @@
   Author: Jim Scarver + Claude — May 2026
 -/
 
-import RhoQuCalc
-import StringTheoryQLF   -- ClosedStringLevel, string_mass_spectrum, string_level_hermitian,
+public import RhoQuCalc
+public import StringTheoryQLF   -- ClosedStringLevel, string_mass_spectrum, string_level_hermitian,
+
+@[expose] public section
                          -- compactifyForm, string_level_zfa_stable, string_level_symmetric
 
 open Matrix
@@ -125,7 +128,7 @@ theorem s_duality_hermitian (f : Form) (level : ℕ) :
 
 /-- S-duality is an involution on Form -/
 theorem s_dual_involution (f : Form) : S_dualForm (S_dualForm f) = f := by
-  simp [S_dualForm, Form.mk.injEq]
+  simp [S_dualForm]
 
 /-- T-duality: double the excitation level.
     Wrapping one compact dimension adds one winding mode per existing excitation,

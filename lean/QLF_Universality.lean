@@ -1,9 +1,12 @@
+module
 -- QLF_Universality.lean
 -- Universality: QLF generates all terminating finitely-encoded logical computations
 
-import QLF_Axioms
-import QLF_QuCalc
-import QLF_Critical_Line
+public import QLF_Axioms
+public import QLF_QuCalc
+public import QLF_Critical_Line
+
+@[expose] public section
 
 namespace QLF
 
@@ -49,13 +52,13 @@ theorem encode_reduces_to_empty (c : TerminatingComputation) :
       -- each edge maps to [pos,neg] or [neg,pos]; both are stripped by zeno_prune
       cases b <;> exact ih
   by_cases hempty : encodeComputation c = []
-  · rw [hempty, full_zeno_prune, dif_neg (by decide)]
+  · rw [hempty, full_zeno_prune, dite_eq_right (by decide)]
   · have hlt : (zeno_prune (encodeComputation c)).length < (encodeComputation c).length := by
       rw [h_zp]
       cases hec : encodeComputation c with
       | nil => exact absurd hec hempty
       | cons _ _ => exact Nat.succ_pos _
-    rw [full_zeno_prune, dif_pos hlt, h_zp, full_zeno_prune, dif_neg (by decide)]
+    rw [full_zeno_prune, dite_eq_left hlt, h_zp, full_zeno_prune, dite_eq_right (by decide)]
 
 theorem encode_is_zfa (c : TerminatingComputation) :
     achieves_ZFA (encodeComputation c) := by

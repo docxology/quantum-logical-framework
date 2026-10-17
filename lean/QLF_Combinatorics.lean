@@ -1,7 +1,10 @@
+module
 -- QLF FORMALIZATION: LEVEL 2 COMBINATORICS
 -- Defining Multiplicity and the Search for Zero Free Action
 
-import QLF_QuCalc
+public import QLF_QuCalc
+
+@[expose] public section
 
 -- 1. THE COMPLETE PHASE ALPHABET
 -- The 2 fundamental phase elements of the QLF (+ and - only; gauge is implicit).

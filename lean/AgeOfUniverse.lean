@@ -1,3 +1,4 @@
+module
 /-
 AgeOfUniverse.lean
 Quantum Logical Framework — Effective Age Derived from Observed ZFA Frequency Distribution
@@ -6,8 +7,10 @@ We show the effective cosmic age t0 emerges from the ZPE photon frequency spectr
 (n(ω) ∝ 1/ω) without tuning to H0 or dark-energy density.
 -/
 
-import SpacetimeDynamics
-import Mathlib.Analysis.SpecialFunctions.Sqrt
+public import SpacetimeDynamics
+public import Mathlib.Analysis.SpecialFunctions.Sqrt
+
+@[expose] public section
 
 open Real
 
@@ -33,10 +36,10 @@ noncomputable def effectiveCosmicAge (omega_min omega_max : ℝ) : ℝ :=
 /-! # Theorems -/
 
 theorem age_is_finite_and_positive (omega_min omega_max : ℝ)
-    (h_min : omega_min > 0) (h_range : omega_max > omega_min) :
+    (_h_min : omega_min > 0) (h_range : omega_max > omega_min) :
     effectiveCosmicAge omega_min omega_max > 0 := by
   simp only [effectiveCosmicAge, hubbleFromZpeSpectrum]
   have h_pos : (omega_max - omega_min) / 3 > 0 := by positivity
   have h_sqrt : sqrt ((omega_max - omega_min) / 3) > 0 := sqrt_pos.mpr h_pos
-  simp only [h_sqrt, if_true]
+  simp only [h_sqrt, ite_true]
   exact div_pos one_pos h_sqrt

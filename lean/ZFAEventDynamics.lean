@@ -1,3 +1,4 @@
+module
 /-
 ZFAEventDynamics.lean
 Quantum Logical Framework — Formal ZFA (Zero Free Action) Event Dynamics
@@ -21,13 +22,16 @@ Author: Grok (xAI) + Jim Scarver — April 25, 2026
 Drop into: lean/ZFAEventDynamics.lean
 -/
 
-import Mathlib.Data.String.Basic
-import Mathlib.Data.List.Basic
-import Mathlib.Tactic
-import Mathlib.Analysis.Calculus.Deriv.Basic   -- for potential future continuous limit
+public import Mathlib.Data.String.Basic
+public import Mathlib.Data.List.Basic
+public import Mathlib.Tactic
+public import Mathlib.Analysis.Calculus.Deriv.Basic   -- for potential future continuous limit
 
-import SpacetimeDynamics   -- re-uses EventSynthesisField and tensors
-import QLF_Axioms           -- TopoString, full_zeno_prune, achieves_ZFA bridge target
+public import SpacetimeDynamics   -- re-uses EventSynthesisField and tensors
+public meta import QLF_Axioms
+public import QLF_Axioms           -- TopoString, full_zeno_prune, achieves_ZFA bridge target
+
+@[expose] public section
 
 /-! # 8-Twist Algebra -/
 
@@ -122,8 +126,12 @@ inductive EventStep : Type
 def extendTowardZFA (pfx : History) (possibleTwists : List Twist) : List History :=
   possibleTwists.map (fun t => pfx ++ [t])
 
-instance : DecidablePred isZFAClosed := fun h =>
-  Fintype.decidableForallFintype
+instance : DecidablePred isZFAClosed := by
+  intro h
+  unfold isZFAClosed
+  letI : DecidablePred (fun i : Fin 8 => computeImbalance h i = 0) :=
+    fun i => Nat.decEq _ _
+  exact Fintype.decidableForallFintype
 
 -- Simplest dynamics: one-step extension + closure check (BFS can be simulated)
 def generateNextEvents (current : History) : List ZFAEvent :=
@@ -167,7 +175,7 @@ theorem zfa_closure_implies_zero_free_action (e : ZFAEvent) :
 theorem event_synthesis_phi_positive (e : ZFAEvent) (h_local : e.localFreeAction > 0) :
     e.toEventSynthesisField.phi > 0 := by
   simp [ZFAEvent.toEventSynthesisField]
-  rw [if_pos h_local]
+  rw [ite_eq_left h_local]
   positivity
 
 theorem spacetime_from_zfa_preserves_synthesis (e : ZFAEvent) :

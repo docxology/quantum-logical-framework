@@ -1,5 +1,8 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Data.Int.Basic
+module
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.Int.Basic
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -130,10 +133,10 @@ theorem full_prune_invariant (s : TopoString) :
 
   have hP : ∀ n, P n := by
     intro n
-    refine Nat.strong_induction_on n ?_
+    refine Nat.strongRecOn n ?_
     intro n ih t ht
     by_cases hlt : (zeno_prune t).length < t.length
-    · rw [full_zeno_prune, dif_pos hlt]
+    · rw [full_zeno_prune, dite_eq_left hlt]
       have hrec_len : (zeno_prune t).length < n := by omega
       have hrec : P (zeno_prune t).length := ih _ hrec_len
       have hrec' :
@@ -142,7 +145,7 @@ theorem full_prune_invariant (s : TopoString) :
             count_pos (zeno_prune t) - count_neg (zeno_prune t) :=
         hrec (zeno_prune t) rfl
       exact hrec'.trans (single_prune_invariant t)
-    · rw [full_zeno_prune, dif_neg hlt]
+    · rw [full_zeno_prune, dite_eq_right hlt]
       -- RESOLVED: The explicit `rfl` was deleted here. `rw` automatically closes it!
 
   exact hP s.length s rfl

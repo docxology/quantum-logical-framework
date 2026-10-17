@@ -1,10 +1,13 @@
+module
 -- ER_EPR_QLF.lean (reconsidered 2026-05-07)
 -- Formal Proof that ER = EPR in the Quantum Logical Framework
 
-import QLF_Axioms
-import ZFAEventDynamics
-import RhoQuCalc
-import SpacetimeDynamics
+public import QLF_Axioms
+public import ZFAEventDynamics
+public import RhoQuCalc
+public import SpacetimeDynamics
+
+@[expose] public section
 
 namespace QLF
 

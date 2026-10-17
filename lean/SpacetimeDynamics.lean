@@ -1,10 +1,13 @@
+module
 -- SpacetimeDynamics.lean
 -- Formalizing the emergence of Time and Gravity from QLF ZFA Latency
 -- Also provides Form (Pauli basis) and EventSynthesisField for downstream modules.
 
-import Mathlib.LinearAlgebra.Matrix.Hermitian
-import Mathlib.Data.Complex.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.LinearAlgebra.Matrix.Hermitian
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+
+@[expose] public section
 
 open Matrix
 
@@ -31,13 +34,13 @@ theorem Form.toMatrix_adjoint (f : Form) :
   apply Matrix.ext; intro i j
   fin_cases i <;> fin_cases j <;>
   simp only [Matrix.conjTranspose_apply, Form.toMatrix,
-    Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.head_fin_const] <;>
+
+    ] <;>
   apply Complex.ext <;>
   simp [Complex.add_re, Complex.add_im, Complex.sub_re, Complex.sub_im,
         Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
-        Complex.conj_re, Complex.conj_im, Complex.star_def]
+        ]
 
 theorem Form.equal_and_opposite_self (f : Form) :
     (f.toMatrix + f.toMatrix).IsHermitian := by
